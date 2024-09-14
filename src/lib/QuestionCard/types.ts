@@ -1,6 +1,6 @@
 export interface Question {
   question: string;
   category: string;
-  type: string;
+  allowMultipleAnswers: boolean;
   options: string[];
 }

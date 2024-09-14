@@ -1,19 +1,37 @@
 <script lang="ts">
   import { type Question } from "./types";
   export let question: Question;
-  let selectedAnswer: string = "";
+  let selections: string[] = [];
+
+  const multiAnswerHandler = (answer: string) => {
+    if (selections.includes(answer)) {
+      selections = selections.filter((selection) => selection !== answer);
+    } else {
+      selections = [...selections, answer];
+    }
+  };
+
+  const singleAnswerHandler = (answer: string) => {
+    selections = [answer];
+  };
+
+  const buttonHandler = question.allowMultipleAnswers
+    ? multiAnswerHandler
+    : singleAnswerHandler;
 </script>
 
 <div>
   <h2>{question.question}</h2>
-  <div class="options" id="option-field">
+  <div class="options">
     {#each question.options as answer}
-      <button on:click={() => (selectedAnswer = answer)} class="option-selected"
+      <button
+        on:click={() => buttonHandler(answer)}
+        class="option-{selections.includes(answer) ? 'selected' : 'unselected'}"
         >{answer}</button
       >
     {/each}
   </div>
-  <p>Selected answer: {selectedAnswer}</p>
+  <p>Selected answer: {selections}</p>
 </div>
 
 <style>
@@ -24,11 +42,20 @@
     border: 2px solid black;
     border-radius: 1rem;
   }
-  .option-selected {
+  .option-unselected {
     font-size: large;
     border: 2px solid black;
     border-radius: 1rem;
     padding: 1rem;
     margin: 1rem;
+    transition: ease-in-out 0.2s;
+  }
+
+  .option-selected {
+    font-size: large;
+    border: 2px solid black;
+    border-radius: 1rem;
+    background-color: lightgreen;
+    transition: ease-in-out 0.2s;
   }
 </style>
