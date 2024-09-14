@@ -1,11 +1,17 @@
 <script lang="ts">
-  import svelteLogo from './assets/svelte.svg'
-  import viteLogo from '/vite.svg'
-  import Counter from './lib/Counter.svelte'
+  import QuestionCard from "./lib/QuestionCard/QuestionCard.svelte";
+  import { type Question } from "./lib/QuestionCard/types";
+  
+  let sampleQuestion: Question = {
+    question: "What is the capital of France?",
+    options: ["Paris", "London", "Berlin", "Madrid"],
+    category: "Geography",
+    type: "single",
+  };
 </script>
 
 <main>
-  <p>Under construction...</p>
+  <QuestionCard question={sampleQuestion}/>
 </main>
 
 <style>
