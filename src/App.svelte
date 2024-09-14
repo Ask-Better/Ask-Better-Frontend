@@ -3,23 +3,28 @@
   import QuestionCard from "./lib/QuestionCard/QuestionCard.svelte";
   import { type Question } from "./lib/QuestionCard/types";
 
-  let sampleQuestionSingle: Question = {
-    question: "What is the capital of France?",
-    options: ["Paris", "London", "Berlin", "Madrid"],
-    category: "Geography",
-    allowMultipleAnswers: false,
-  };
-  let sampleQuestionMulti: Question = {
+  let sampleQuestionQuiz: Question = {
     question: "Which of these are mammals?",
-    options: ["Dog", "Cat", "Fish", "Bird"],
+    options: ["Dog", "Cat", "Fish", "Bird","Human", "Snake"],
     category: "Biology",
     allowMultipleAnswers: true,
+    type: "Quiz",
+    correctAnswers: ["Dog", "Cat"],
+  };
+
+  let sampleQuestionPoll: Question = {
+    question: "What is your favorite color?",
+    options: ["Red", "Blue", "Green"],
+    category: "Poll",
+    allowMultipleAnswers: false,
+    type: "Poll",
+    correctAnswers: null,
   };
 </script>
 
 <main>
-  <QuestionCard question={sampleQuestionSingle} />
-  <QuestionCard question={sampleQuestionMulti} />
+  <QuestionCard question={sampleQuestionQuiz} />
+  <QuestionCard question={sampleQuestionPoll} />
 </main>
 
 <style>
