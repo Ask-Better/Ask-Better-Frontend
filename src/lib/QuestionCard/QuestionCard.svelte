@@ -117,7 +117,7 @@
   }
 
   button {
-    transition: ease-in-out 0.4s;
+    transition: ease-in-out 0.2s;
   }
 
   .submision {
