@@ -1,23 +1,7 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import type { Comment } from "./types";
-    
-    const fetchComments = async () => {
-        const response = await fetch("https://jsonplaceholder.typicode.com/comments");
-        const data = await response.json();
-
-        console.log(data);
-        return data;
-    };
-
-    let comments: Comment[] = [];
-
-    onMount(() => {
-        fetchComments().then((data) => {
-            comments = data.slice(0, 5);
-            console.log(comments);
-        });
-    });
+    export let comments: Comment[];
 </script>
 
 <div class="chat-area">
