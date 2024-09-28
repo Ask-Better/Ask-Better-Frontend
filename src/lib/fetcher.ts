@@ -1,22 +1,37 @@
-//! work in progrss
-type ErrorHandler = (resCode: number) => void;
-type Fetcher = (
-  input: URL | RequestInfo,
-  init?: RequestInit,
-  errHandler?: ErrorHandler
-) => Promise<Response | undefined>;
+type ErrorHandler = (error: Error) => void;
 
-const fetcher: Fetcher = async (
-  input: URL | RequestInfo,
-  init?: RequestInit,
-  errHandler?: ErrorHandler
-) => {
-  const response = await fetch(input, init);
+class Fetcher {
+  private url: URL | RequestInfo;
+  private errorHandlers: { [key: number]: ErrorHandler };
+  private init?: RequestInit;
 
-  // if the response is ok, return the response
-  if (response.ok) return response;
+  constructor(url: URL | RequestInfo, init?: RequestInit) {
+    this.url = url;
+    this.errorHandlers = {};
+    this.init = init;
+  }
 
-  // otherwise, call the error handler and return undefined
-  if (errHandler) errHandler(response.status);
-  return undefined;
-};
+  setErrHandler(statusCode: number, handler: ErrorHandler) {
+    this.errorHandlers[statusCode] = handler;
+    return this;
+  }
+
+  async sfetch(callback: (data: any) => void) {
+    return fetch(this.url, this.init).then((response) => {
+      if (response.ok) {
+        return response.json().then((data) => callback(data));
+      } else {
+        const error = new Error(response.statusText);
+        const errorHandler = this.errorHandlers[response.status];
+
+        if (this.errorHandlers[response.status]) {
+          errorHandler(error);
+        } else {
+          throw error;
+        }
+      }
+    });
+  }
+}
+
+export default Fetcher;

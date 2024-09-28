@@ -1,54 +1,45 @@
 <script lang="ts">
-  import { type Question } from "./types";
+  import TitleDescriptionDisplay from "../GeneralComponents/TitleDescriptionDisplay.svelte";
+
+  import type { Question } from "./types";
   export let question: Question;
   let selections: string[] = [];
 
-  const multiAnswerHandler = (answer: string) => {
-    if (selections.includes(answer)) {
-      selections = selections.filter((selection) => selection !== answer);
+  const clickHandler = (option: string) => {
+    if (selections.includes(option)) {
+      selections = selections.filter((selection) => selection !== option);
     } else {
-      selections = [...selections, answer];
+      selections = [...selections, option];
     }
   };
 
-  const singleAnswerHandler = (answer: string) => {
-    selections = [answer];
+  const submitHandler = () => {
+    if (question.inputType === "select" && "options" in question.data) {
+      const userSelection: number[] = selections.map((selection) =>
+        // @ts-ignore
+        question.data.options.indexOf(selection)
+      );
+      console.log(userSelection);
+    }
   };
-
-  const buttonHandler = question.allowMultipleAnswers
-    ? multiAnswerHandler
-    : singleAnswerHandler;
-
-  const submitHandlerQuiz = () => {
-    //! TODO
-  };
-
-  const submitHandlerPoll = () => {
-    //! TODO
-  };
-
-  const submitHandler =
-    question.type === "Quiz" ? submitHandlerQuiz : submitHandlerPoll;
 </script>
 
 <div>
   <h2>
-    <ruby>
-      {question.question}
-      <rt>{question.type}</rt>
-    </ruby>
+    <TitleDescriptionDisplay object={question.data} />
   </h2>
   <div class="options">
-    {#each question.options as answer}
-    <div class="option-container">
-    <button
-    on:click={() => buttonHandler(answer)}
-    class="option-{selections.includes(answer)
-            ? 'selected'
-            : 'unselected'}">{answer}</button
-        >
-      </div>
-    {/each}
+    {#if question.inputType === "select" && "options" in question.data}
+      {#each question.data.options as option}
+        <div class="option-container">
+          <button
+            on:click={() => clickHandler(option)}
+            class="option {selections.includes(option) ? 'selected' : ''}"
+            >{option}</button
+          >
+        </div>
+      {/each}
+    {/if}
   </div>
 
   <div class="submision">
@@ -57,16 +48,6 @@
 </div>
 
 <style>
-  ruby {
-    display: grid;
-    text-align: center;
-    grid-template-rows: 1fr;
-  }
-  rt {
-    font-size: small;
-    color: #535bf2;
-  }
-
   .option-container {
     display: flex;
     justify-content: center;
@@ -79,45 +60,39 @@
     border: 2px solid black;
     border-radius: 1rem;
     overflow: hidden;
-    
     padding: 1rem;
     margin: 1rem;
   }
 
-  .option-unselected {
-    font-size: large;
-    border: 2px solid black;
-    border-radius: 0;
-
-    width: 80%;
-    height: 80%;
+  .option {
     display: flex;
     justify-content: center;
     align-items: center;
-    
-    padding: 2rem;
+
+    outline: 2px solid black;
+    font-size: large;
+
+    padding: 1rem;
+    min-width: fit-content;
+
+    width: 50%;
+    height: 80%;
+
+    transition: ease-in-out 0.2s;
   }
 
-  .option-selected {
-    font-size: large;
-    border-radius: 1rem;
-    border-radius: 0;
-    background-color: #535bf2;
-
+  .option.selected {
     width: 100%;
     height: 100%;
-    padding: 2rem;
+
+    border-radius: 0;
+    outline: 0;
+
+    background-color: #535bf2;
   }
 
-  .option-unselected:hover {
-    border: 1px solid white;
-  }
-  .option-selected:hover {
-    border: 1px solid white;
-  }
-
-  button {
-    transition: ease-in-out 0.2s;
+  .option:hover {
+    background-color: #646cf3;
   }
 
   .submision {
